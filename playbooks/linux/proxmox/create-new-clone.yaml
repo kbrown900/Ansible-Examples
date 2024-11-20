@@ -1,0 +1,69 @@
+---
+# Assumes using SSH Key
+- hosts: '{{ HOST_IP }}'
+  become: false
+  gather_facts: false
+  tasks:
+
+
+#This playbook dynamically creates a new VM clone based on a template, then starts the new VM. 
+
+### Variables used ###
+# Change vars to fit environment. Pass vars securly if possible.
+  vars: 
+    # DO NOT HARDCODE API_KEY FOR SECURITY - USE SECRETS!
+    API_KEY: abc123 #API key of created API user within Proxmox. ##########NOT SECURE TO HARDCODE LIKE THIS - PASS WITH SECRETS##########
+    API_USER: example@pam #API user
+    API_TOKEN: ExampleTokenName #API Token Name
+    HOST_IP: 10.0.0.10 #IP address of Proxmox 
+    NODE: pve-host-01 #Name of Proxmox Node to add new VM to
+    VM_Name: ansible-test #Desired name of new VM
+    CLONE_NAME: vm-to-clone #VM Name to Clone
+    CLONE_ID: 8000 #VM ID to clone from
+
+# Check to see if the desired VM exists
+  - name: Check if VM exists
+    proxmox_kvm:
+      api_user: '{{ API_USER }}'
+      api_token_id: '{{ API_TOKEN }}'
+      api_token_secret: '{{ API_KEY }}'
+      api_host: '{{ HOST_IP }}'
+      node: '{{ NODE }}'
+      name: '{{ VM_Name }}'
+      state: current
+    register: vm_state 
+    check_mode: false
+    failed_when: false
+
+# Creates the VM from a Cloud-init template
+  - name: Create New VM
+    when: '" exists" not in vm_state.msg'
+    vars:
+      ansible_python_interpreter: /usr/bin/python3
+    proxmox_kvm:
+      api_user: '{{ API_USER }}'
+      api_token_id: '{{ API_TOKEN }}'
+      api_token_secret: '{{ API_KEY }}'
+      api_host: '{{ HOST_IP }}'
+      clone: '{{ CLONE_NAME }}' 
+      node: '{{ NODE }}'
+      vmid: '{{ CLONE_ID }}'
+      name: '{{ VM_Name }}'
+      timeout: 60
+
+# Delay ansible to make sure VM is ready to be turned on    
+  - name: Wait for VM to exist
+    when: '" exists" not in vm_state.msg'
+    pause:
+      seconds: 20
+
+# Start the newly created VM.      
+  - name: Start VM
+    when: '" exists" not in vm_state.msg'
+    proxmox_kvm:
+      api_user: '{{ API_USER }}'
+      api_token_id: '{{ API_TOKEN }}'
+      api_token_secret: '{{ API_KEY }}'
+      api_host: '{{ HOST_IP }}'
+      name: '{{ VM_Name }}'
+      state: started
