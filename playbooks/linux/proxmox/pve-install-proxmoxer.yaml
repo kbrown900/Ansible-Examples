@@ -1,0 +1,18 @@
+#Assumes using SSH Key
+- hosts: all
+  become: true
+
+# This playbook installs the required proxmoxer to control VM's on a Proxmox Host. 
+# Run this playbook against the proxmox hosts themselves. 
+
+  tasks:
+  - name: update repository cache
+    apt:
+      update_cache: yes
+      cache_valid_time: 3600
+
+  - name: install proxmoxer
+    apt:
+      name:
+      - python3-proxmoxer
+      state: latest
