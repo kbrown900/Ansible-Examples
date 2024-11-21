@@ -66,7 +66,12 @@
         append: true
         state: present
         createhome: true
-
+        
+    - name: Create Downloads directory if it does not exist
+      file:
+        path: /home/ansiblie/Downloads
+        state: directory
+        mode: '0755'
 #Install/Configure Zabbix
     - name: Add zabbix repo
       get_url: 
