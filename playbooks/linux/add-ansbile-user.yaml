@@ -1,0 +1,35 @@
+# Playbook creates the desired user with a home directory, and adds them to sudoers, adds the public ssh key for remote
+# ssh, and makes it to where it doesn't require a password, only the ssh key 
+
+---
+- name: Add Ansible User
+  hosts: all
+  become: true
+  become_user: root
+  become_method: sudo
+
+  vars:
+    NEW_USER: example #user to create - corrisponds with separately generated SSH Key
+
+  tasks:
+    - name: Create ansible user
+      tags: always
+      user:
+        name: '{{ NEW_USER }}'
+        groups: sudo
+        append: true
+        state: present
+        createhome: true
+
+    - name: add SSH key for ansible
+      tags: always
+      authorized_key: 
+        user: '{{ NEW_USER }}'
+        key: "<SSH public key>"
+
+    - name: add user to sudoers
+      tags: always
+      copy: 
+        dest: /etc/sudoers.d/80-ansible-sudo-user
+        content: "ansible ALL=(ALL) NOPASSWD:ALL"
+        mode: 0440
