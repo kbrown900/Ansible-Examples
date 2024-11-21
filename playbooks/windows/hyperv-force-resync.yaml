@@ -1,0 +1,12 @@
+# Playbook runs Powershell command to force all VM's to start the replication Resync process
+# Run against the hyper-v hosts
+---
+- name: Windows Force VM Resync
+  hosts: all
+  become: yes
+  become_method: runas
+
+  tasks:
+    - name: Run Resync Command
+      win_shell: Resume-VMReplication * -Resynchronize
+      failed_when: false
