@@ -1,9 +1,9 @@
-#Assumes using SSH Key
-- hosts: all
-  become: true
-
 # This playbook installs the required proxmoxer to control VM's on a Proxmox Host. 
 # Run this playbook against the proxmox hosts themselves. 
+# Assumes using SSH Key
+---
+- hosts: all
+  become: true
 
   tasks:
   - name: update repository cache
