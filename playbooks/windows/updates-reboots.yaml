@@ -1,0 +1,26 @@
+# Playbook installs all updates on a windows host, then restarts all but a given server (ie the docker host) 
+# then restarts the the docker host after all others finish.
+# throttle: 1 to limit to 1 host at a time as to avoid restarting the docker host till last.
+---
+- name: Windows Updates and Reboots
+  hosts: all
+  become: yes
+  become_method: runas
+
+  tasks:  
+    - name: Install all updates
+      throttle: 1
+      win_updates:
+        category_names: '*'
+
+    - name: Reboot Servers - non-docker hosts
+      throttle: 1
+      win_reboot:
+        reboot_timeout: 3600      
+      when: ansible_host != '10.0.0.12'
+
+    - name: Reboot Servers - Docker Host
+      throttle: 1
+      win_reboot:
+        reboot_timeout: 3600      
+      when: ansible_host == '10.0.0.12'      
