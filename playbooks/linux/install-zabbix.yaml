@@ -124,7 +124,7 @@
         dest: '{{ zabbix_conf }}'
         regexp: ^HostMetadata=.*
         insertafter: ^# HostMetadata=
-        line: Linux
+        line: HostMetadata=Linux
         
     - name: Create psk.psk 
       copy:
