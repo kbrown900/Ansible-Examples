@@ -1,0 +1,8 @@
+# Basic playbook that just pings the hosts making sure connections work. Works on Linux and Windows.
+---
+- name: Check Connectivity
+  hosts: all
+  
+  tasks:
+    - name: Ping all nodes
+      ansible.builtin.ping:
