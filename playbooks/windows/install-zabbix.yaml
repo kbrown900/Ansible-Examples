@@ -1,0 +1,34 @@
+---
+- name: Install Zabbix Agent
+  hosts: all
+  become: yes
+  become_method: runas
+
+# This playbook installs the windows zabbix agent MSI into default location with TLS Encryption
+
+  vars:
+    PATH: \\server\share\zabbix.msi #Share location of the Zabbix Installer
+    SVR_IP: 10.0.0.18 #Zabbix Server IP address
+    TLSID: example #TLS PSK ID 
+    TLSKEY: abc123 #TLS PSK Key ### NOT SECURE ###
+
+  tasks:
+    - name: Check if installed
+      win_stat: path='C:\Program Files\Zabbix Agent\zabbix_agentd.exe'
+      register: zabbix_installed
+
+    - name: Install Zabbix
+      win_package:
+        path: "{{ PATH }}"
+        arguments: >-
+          SERVER="{{ SVR_IP }}"
+          TIMEOUT=30
+          LISTENPORT=10050
+          SERVERACTIVE="{{ SVR_IP }}"
+          TLSCONNECT=psk
+          TLSACCEPT=psk
+          TLSPSKIDENTITY="{{ TLSID }}"
+          TLSPSKVALUE="{{ TLSKEY }}"
+          ALLOWDENYKEY="AllowKey=system.run[*]"
+        state: present
+      when: not zabbix_installed.stat.exists
