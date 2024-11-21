@@ -1,2 +1,3 @@
 # Ansible-Examples
-Just some ansible playbooks I use that I thought may be helpful to others. 
+
+A small repo with some of the basic ansbile playbooks I use and some examples that may be helpful to others.
