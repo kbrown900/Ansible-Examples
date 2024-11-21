@@ -12,7 +12,7 @@
 ## Change <changeme> in install path to correct user you will be creating, in this case "example". 
   vars:
     zabbix_url: https://repo.zabbix.com/zabbix/7.2/release/ubuntu/pool/main/z/zabbix-release/zabbix-release_latest+ubuntu24.04_all.deb
-    zabbix_install_path: /home/<changeme>/Downloads/zabbix-release_latest+ubuntu24.04_all.deb
+    zabbix_install_path: /etc/zabbix-release_latest+ubuntu24.04_all.deb
     zabbix_conf: /etc/zabbix/zabbix_agentd.conf
     NEW_USER: example
     PSK_PATH: /etc/zabbix/psk.psk #file path to create the PSK file for Zabbix
@@ -56,22 +56,7 @@
       service:
         name: qemu-guest-agent
         state: started
-
-#Add new user
-    - name: Create user
-      tags: always
-      user:
-        name: '{{ NEW_USER }}'
-        groups: sudo
-        append: true
-        state: present
-        createhome: true
         
-    - name: Create Downloads directory if it does not exist
-      file:
-        path: /home/ansiblie/Downloads
-        state: directory
-        mode: '0755'
 #Install/Configure Zabbix
     - name: Add zabbix repo
       get_url: 
