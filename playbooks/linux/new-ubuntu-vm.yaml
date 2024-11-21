@@ -159,6 +159,13 @@
         regexp: ^TLSPSKFile=.*
         insertafter: ^# TLSPSKFile=
         line: TLSPSKFile= '{{ PSK_PATH }}'
+    
+    - name: Add Linux to Metadata
+      lineinfile:
+        dest: '{{ zabbix_conf }}'
+        regexp: ^HostMetadata=.*
+        insertafter: ^# HostMetadata=
+        line: HostMetadata=Linux
         
     - name: Create psk.psk 
       copy:
