@@ -1,10 +1,9 @@
+#This playbook installs the basic QEMU Guest Agent on a VM then Reboots if needed.
 ---
 #Assumes using SSH Key
 - name: Install qemu-guest-agent package
   hosts: all
   become: true
-
-#This playbook installs the basic QEMU Guest Agent on a VM then Reboots if needed.
 
   tasks:
     - name: Update Cached Packages
