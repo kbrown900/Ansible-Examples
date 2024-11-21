@@ -10,7 +10,7 @@
   vars:
     SVRIP: 10.0.0.50 #IP address of Zabbix Server
     zabbix_url: https://repo.zabbix.com/zabbix/7.2/release/ubuntu/pool/main/z/zabbix-release/zabbix-release_latest+ubuntu24.04_all.deb
-    zabbix_install_path: /home/<changeme>/Downloads/zabbix-release_latest+ubuntu24.04_all.deb
+    zabbix_install_path: /etc/zabbix-release_latest+ubuntu24.04_all.deb
     zabbix_conf: /etc/zabbix/zabbix_agentd.conf
     TLSPSKFile: /etc/zabbix/psk.psk #change to desired location of psk file
     TLSPSK: abc123 #change to your PSK information. 
