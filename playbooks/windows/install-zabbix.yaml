@@ -1,10 +1,9 @@
+# This playbook installs the windows zabbix agent MSI into default location with TLS Encryption
 ---
 - name: Install Zabbix Agent
   hosts: all
   become: yes
   become_method: runas
-
-# This playbook installs the windows zabbix agent MSI into default location with TLS Encryption
 
   vars:
     PATH: \\server\share\zabbix.msi #Share location of the Zabbix Installer
