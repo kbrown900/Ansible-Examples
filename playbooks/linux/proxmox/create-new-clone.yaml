@@ -1,12 +1,10 @@
+#This playbook dynamically creates a new VM clone based on a template, then starts the new VM. 
 ---
 # Assumes using SSH Key
 - hosts: '{{ HOST_IP }}'
   become: false
   gather_facts: false
   tasks:
-
-
-#This playbook dynamically creates a new VM clone based on a template, then starts the new VM. 
 
 ### Variables used ###
 # Change vars to fit environment. Pass vars securly if possible.
