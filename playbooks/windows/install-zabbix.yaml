@@ -28,7 +28,7 @@
           TLSACCEPT=psk
           TLSPSKIDENTITY="{{ TLSID }}"
           TLSPSKVALUE="{{ TLSKEY }}"
-          HostMetadata=Windows
+          HOSTMETADATA=Windows
           ALLOWDENYKEY="AllowKey=system.run[*]"
         state: present
       when: not zabbix_installed.stat.exists
