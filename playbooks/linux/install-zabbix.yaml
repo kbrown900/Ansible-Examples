@@ -45,86 +45,28 @@
       wait_for:
         path: '{{ zabbix_conf }}'
 
-    - name: Configure Zabbix Server IP
-      lineinfile:
-        path: '{{ zabbix_conf }}'
-        regexp: ^Server=.*
-        insertafter: ^# Server=
-        line: Server={{ SVRIP }}
-
-    - name: Configure Zabbix Active Server IP
-      lineinfile:
-        path: '{{ zabbix_conf }}'
-        regexp: ^ServerActive=.*
-        insertafter: ^# ServerActive=
-        line: ServerActive={{ SVRIP }}
-        
     - name: Get Hostname
       command: hostname
       register: local_hostname
-    
-    - name: Set hostname on conf file
-      lineinfile:
-        dest: '{{ zabbix_conf }}'
-        regexp: ^Hostname=.*
-        insertafter: ^# Hostname=
-        line: Hostname={{ local_hostname.stdout }}
 
-    - name: Set AllowKey
+    - name: Configure Zabbix
       lineinfile:
-        dest: '{{ zabbix_conf }}'
-        regexp: ^DenyKey=.*
-        insertafter: ^# DenyKey=
-        line: AllowKey=system.run[*]
-
-    - name: Set ListenPort
-      lineinfile:
-        dest: '{{ zabbix_conf }}'
-        regexp: ^ListenPort=.*
-        insertafter: ^# ListenPort=
-        line: ListenPort=10050
-
-    - name: Set TLSConnect
-      lineinfile:
-        dest: '{{ zabbix_conf }}'
-        regexp: ^TLSConnect=.*
-        insertafter: ^# TLSConnect=
-        line: TLSConnect=psk  
-
-    - name: Set TLSAccept
-      lineinfile:
-        dest: '{{ zabbix_conf }}'
-        regexp: ^TLSAccept=.*
-        insertafter: ^# TLSAccept=
-        line: TLSAccept=psk
-
-    - name: Set TLSPSKIdentity
-      lineinfile:
-        dest: '{{ zabbix_conf }}'
-        regexp: ^TLSPSKIdentity=.*
-        insertafter: ^# TLSPSKIdentity=
-        line: TLSPSKIdentity={{ TLSID }}      
-
-    - name: Set Timeout
-      lineinfile:
-        dest: '{{ zabbix_conf }}'
-        regexp: ^Timeout=.*
-        insertafter: ^# Timeout=
-        line: Timeout=30  
-
-    - name: Set TLSPSKFile
-      lineinfile:
-        dest: '{{ zabbix_conf }}'
-        regexp: ^TLSPSKFile=.*
-        insertafter: ^# TLSPSKFile=
-        line: TLSPSKFile= {{ TLSPSKFile }}
-
-    - name: Add Linux to Metadata
-      lineinfile:
-        dest: '{{ zabbix_conf }}'
-        regexp: ^HostMetadata=.*
-        insertafter: ^# HostMetadata=
-        line: HostMetadata=Linux
+        path: '{{ zabbix_conf }}'
+        regexp: "{{ item.regexp }}"
+        insertafter: "{{ item.insertafter }}"
+        line: "{{ item.line }}"
+      with_items:
+        - {regexp: '^Server=.*', insertafter: '^# Server=', line: 'Server= {{ SVRIP }}' }
+        - {regexp: '^ServerActive=.*', insertafter: '^# ServerActive=', line: 'ServerActive= {{ SVRIP }}' }
+        - {regexp: '^Hostname=.*', insertafter: '^# Hostname=', line: 'Hostname={{ local_hostname.stdout }}' }
+        - {regexp: '^DenyKey=.*', insertafter: '^# DenyKey=', line: 'AllowKey=system.run[*]' }
+        - {regexp: '^ListenPort=.*', insertafter: '^# ListenPort=', line: 'ListenPort=10050' }
+        - {regexp: '^TLSConnect=.*', insertafter: '^# TLSConnect=', line: 'TLSConnect=psk' }
+        - {regexp: '^TLSAccept=.*', insertafter: '^# TLSAccept=', line: 'TLSAccept=psk, unencrypted' }
+        - {regexp: '^TLSPSKIdentity=.*', insertafter: '^# TLSPSKIdentity=', line: 'TLSPSKIdentity={{ TLSID }}' }
+        - {regexp: '^Timeout=.*', insertafter: '^# Timeout=', line: 'Timeout=30'  }
+        - {regexp: '^TLSPSKFile=.*', insertafter: '^# TLSPSKFile=', line: 'TLSPSKFile= {{ TLSPSKFile }}'  }
+        - {regexp: '^HostMetadata=.*', insertafter: '^# HostMetadata=', line: 'HostMetadata=Linux'  }
         
     - name: Create psk.psk 
       copy:
