@@ -14,7 +14,7 @@
     NEW_USER: example
     SSH_PUB: <changeme> #Public SSH key
     zabbix_url: https://repo.zabbix.com/zabbix/7.2/release/ubuntu/pool/main/z/zabbix-release/zabbix-release_latest+ubuntu24.04_all.deb
-    zabbix_install_path: /home/<changeme>/Downloads/zabbix-release_latest+ubuntu24.04_all.deb
+    zabbix_install_path: /etc/zabbix-release_latest+ubuntu24.04_all.deb
     zabbix_conf: /etc/zabbix/zabbix_agentd.conf
     SVRIP: 10.0.0.18 #Zabbix Server IP
     TLSID: example
