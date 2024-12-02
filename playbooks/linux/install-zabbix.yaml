@@ -6,7 +6,6 @@
 
 ### Update URL, Install path, and psk location as necessary ###
 # Assumes standard configuration of zabbix. Change as needed
-# Change <changeme> to the correct username
   vars:
     SVRIP: 10.0.0.50 #IP address of Zabbix Server
     zabbix_url: https://repo.zabbix.com/zabbix/7.2/release/ubuntu/pool/main/z/zabbix-release/zabbix-release_latest+ubuntu24.04_all.deb
