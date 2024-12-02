@@ -107,7 +107,7 @@
         
     - name: Create psk.psk 
       copy:
-        dest: /etc/zabbix/psk.psk
+        dest: '{{ PSK_PATH }}'
         content: '{{ TLSPSK }}'
 
     - name: Restart Zabbix-Agent
