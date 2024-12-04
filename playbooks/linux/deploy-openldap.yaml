@@ -1,0 +1,83 @@
+- name: New OpenLDAP server with phpLDAPadmin
+  hosts: all
+  become: true
+
+  vars:
+    phpconf_name: $servers->setValue('server','name','Test OpenLDAP'); #change Test OpenLDAP as needed
+    phpconf_DC: $servers->setValue('server','base',array('dc=test,dc=com')); #base Domain. Change as desired
+    phpconf_DC_search: $servers->setValue('server','base',array('dc=example,dc=com')); #fix for trouble searching and regexp, ignore
+    phpconf_bind: $servers->setValue('login','bind_id','cn=admin,dc=test,dc=com'); #Bind ID for admin
+    phpconf_template_warning: $config->custom->appearance['hide_template_warning'] = true; #disable template warning
+    phpconf_TZ: $config->custom->appearance['timezone'] = 'America/Los_Angeles'; #Set Timezone
+    DNS_DOMAIN: 'test.com' #base domain
+    ORG_NAME: 'test' #Org name
+    ADMIN_PASS: testpass #admin password
+
+  tasks:
+    - name: Update Cache
+      apt:
+        update_cache: yes
+
+    - name: Set hostname
+      hostname:
+        name: openldap.test.com
+
+    - name: Install OpenLDAP/phpLDAPadmin requirements Server
+      apt:
+        name: "{{ item }}"
+        state: present
+      loop:
+        - slapd
+        - ldap-utils
+        - apache2
+        - php
+        - php-cgi
+        - libapache2-mod-php
+        - php-mbstring 
+        - php-common
+        - php-pear
+
+    - name: Configure apache2
+      command: a2enconf php*-cgi
+
+    - name: Restart Apache
+      command: systemctl reload apache2
+
+    - name: Install phpLDAPadmin
+      apt:
+        name: phpldapadmin
+        state: present
+
+    - name: Configure phpLDAPadmin
+      lineinfile:
+        path: /etc/phpldapadmin/config.php
+        search_string: "{{ item.search_string }}"
+        line: "{{ item.line }}"
+      with_items:
+        - {search_string: 'Australia/Melbourne', line: '{{ phpconf_TZ }}' }
+        - {search_string: 'My LDAP Server', line: '{{ phpconf_name }}' }
+        - {search_string: '{{ phpconf_DC_search }}', line: '{{ phpconf_DC }}' }
+        - {search_string: 'cn=admin,dc=example,dc=com', line: '{{ phpconf_bind }}' }
+        - {search_string: 'hide_template_warning', line: '{{ phpconf_template_warning }}' }
+
+    - name: Configure slapd
+      expect:
+        command: dpkg-reconfigure slapd
+        responses: 
+          'Omit OpenLDAP server configuration?' : 'No'
+          'DNS domain name:' : '{{ DNS_DOMAIN }}'
+          'Organization name:' : '{{ ORG_NAME }}'
+          'Administrator password:' : '{{ ADMIN_PASS }}'
+          'Confirm password:' : '{{ ADMIN_PASS }}'
+          'Database backend?' : 'MDB'
+          'Do you want the database to be removed when slapd is purged?' : 'No'
+          'Move old database?' : 'Yes'
+          'Allow LDAPv2 protocol?' : 'No'
+
+    - name: Test LDAP Connection
+      command: ldapwhoami -H ldap:// -x
+      register: ldap_test
+
+    - name: Debug
+      debug:
+        msg: '{{ ldap_test.stdout }}'
