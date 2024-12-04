@@ -1,3 +1,6 @@
+# Playbook creates a basic OpenLDAP domain, with the phpLDAPadmin GUI as well.
+# DOES NOT CREAT SSL CONNECTION
+# WIP, but basic config works for a homelab. 
 - name: New OpenLDAP server with phpLDAPadmin
   hosts: all
   become: true
