@@ -13,6 +13,7 @@
     zabbix_conf: /etc/zabbix/zabbix_agentd.conf
     TLSPSKFile: /etc/zabbix/psk.psk #change to desired location of psk file
     TLSPSK: abc123 #change to your PSK information. 
+    zabbix_agent_package: zabbix-agent
 
   tasks:
     - name: Update Cached Packages
@@ -23,26 +24,30 @@
       get_url: 
         url: '{{ zabbix_url }}'
         dest: '{{ zabbix_install_path }}'
-    
-    - name: Wait for file to download
-      wait_for:
-        path: '{{ zabbix_install_path }}'
   
-    - name: Install Zabbix DPKG
+    - name: Install Zabbix repo package
       apt:
-        deb: '{{ zabbix_install_path }}'
+        deb: "{{ zabbix_install_path }}"
 
-    - name: Update Cache
+    - name: Update Cached Packages to see Zabbix
       apt:
         update_cache: yes
     
     - name: Install Zabbix
       apt:
-        name: zabbix-agent
+        name: "{{ zabbix_agent_package }}"
+        state: present
 
-    - name: Wait for file to exist
+    - name: Ensure Zabbix config file exists
+      stat:
+        path: "{{ zabbix_conf }}"
+      register: zabbix_conf_status
+
+    - name: Wait for Zabbix config to be created (if needed)
       wait_for:
-        path: '{{ zabbix_conf }}'
+        path: "{{ zabbix_conf }}"
+        timeout: 30
+      when: not zabbix_conf_status.stat.exists
 
     - name: Get Hostname
       command: hostname
@@ -54,7 +59,7 @@
         regexp: "{{ item.regexp }}"
         insertafter: "{{ item.insertafter }}"
         line: "{{ item.line }}"
-      with_items:
+      loop:
         - {regexp: '^Server=.*', insertafter: '^# Server=', line: 'Server= {{ SVRIP }}' }
         - {regexp: '^ServerActive=.*', insertafter: '^# ServerActive=', line: 'ServerActive= {{ SVRIP }}' }
         - {regexp: '^Hostname=.*', insertafter: '^# Hostname=', line: 'Hostname={{ local_hostname.stdout }}' }
@@ -66,18 +71,14 @@
         - {regexp: '^Timeout=.*', insertafter: '^# Timeout=', line: 'Timeout=30'  }
         - {regexp: '^TLSPSKFile=.*', insertafter: '^# TLSPSKFile=', line: 'TLSPSKFile= {{ TLSPSKFile }}'  }
         - {regexp: '^HostMetadata=.*', insertafter: '^# HostMetadata=', line: 'HostMetadata=Linux'  }
-        
+
     - name: Create psk.psk 
       copy:
         dest: '{{ TLSPSKFile }}'
         content: '{{ TLSPSK }}'
 
-    - name: Restart Zabbix-Agent
+    - name: Restart and enable Zabbix agent
       service:
-        name: zabbix-agent
+        name: "{{ zabbix_agent_package }}"
         state: restarted
-
-    - name: Enable Zabbix Agent
-      service:
-        name: zabbix-agent
         enabled: yes
