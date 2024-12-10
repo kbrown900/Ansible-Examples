@@ -15,6 +15,7 @@
     DNS_DOMAIN: 'test.com' #base domain
     ORG_NAME: 'test' #Org name
     ADMIN_PASS: testpass #admin password
+    NEW_FQDN: openldap.test.com
 
   tasks:
     - name: Update Cache
@@ -23,7 +24,7 @@
 
     - name: Set hostname
       hostname:
-        name: openldap.test.com
+        name: '{{ NEW_FQDN }}'
 
     - name: Install OpenLDAP/phpLDAPadmin requirements Server
       apt:
@@ -56,7 +57,7 @@
         path: /etc/phpldapadmin/config.php
         search_string: "{{ item.search_string }}"
         line: "{{ item.line }}"
-      with_items:
+      loop:
         - {search_string: 'Australia/Melbourne', line: '{{ phpconf_TZ }}' }
         - {search_string: 'My LDAP Server', line: '{{ phpconf_name }}' }
         - {search_string: '{{ phpconf_DC_search }}', line: '{{ phpconf_DC }}' }
