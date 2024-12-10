@@ -1,6 +1,6 @@
 # Playbook installs all updates on a windows host, then restarts all but a given server (ie the docker host) 
 # then restarts the the docker host after all others finish.
-# throttle: 1 to limit to 1 host at a time as to avoid restarting the docker host till last.
+# throttle: 1 is used to limit connections to 1 host at a time as to avoid restarting the docker host till last.
 ---
 - name: Windows Updates and Reboots
   hosts: all
