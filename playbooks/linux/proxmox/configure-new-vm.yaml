@@ -1,6 +1,6 @@
 # Playbook runs against newly created VM with no desktop environment.
 # Runs best against newly created Cloud-Init clone. 
-# Installs Ubuntu Desktop, QEMU Guest Agent for Proxmox, Adds a new user for our Zabbix install path, 
+# Installs Ubuntu Desktop and QEMU Guest Agent for Proxmox, Adds a new user for our Zabbix install path, 
 # Installs and Configures Zabbix Agent, and finishs with installing any remaining updates and a dist-upgrade
 # Assumes SSH public key already added
 ---
@@ -11,10 +11,9 @@
 ## Change URL and Install paths as needed - Assumes Ubuntu 24.04
   vars:
     zabbix_url: https://repo.zabbix.com/zabbix/7.2/release/ubuntu/pool/main/z/zabbix-release/zabbix-release_latest+ubuntu24.04_all.deb
-    zabbix_install_path: /etc/zabbix-release_latest+ubuntu24.04_all.deb
+    zabbix_install_path: /tmp/zabbix-release.deb
     zabbix_conf: /etc/zabbix/zabbix_agentd.conf
     zabbix_package: zabbix-agent
-    NEW_USER: example
     PSK_PATH: /etc/zabbix/psk.psk #file path to create the PSK file for Zabbix
     # Change the following for your environment. 
     SVRIP: 10.0.0.18 #Zabbix server IP
