@@ -28,12 +28,15 @@
         upgrade: dist
 
 #Install Desktop
-    - name: Install Ubuntu Desktop - This will take a few minutes
+    - name: Install Required Programs - This will take a few minutes
       apt:
-        name: ubuntu-desktop
-        name: gdm3
+        name: "{{ item }}"
         state: present
-    
+      loop: 
+        - ubuntu-desktop
+        - gdm3
+        - qemu-guest-agent
+        
     - name: Reboot Localhost
       reboot:
 
@@ -42,17 +45,6 @@
         update_cache: yes
         upgrade: dist
 
-#Install QEMU Guest Agent
-    - name: Install qemu-guest-agent
-      apt:
-        name: qemu-guest-agent
-        state: present
-
-    - name: Start qemu-guest-agent
-      service:
-        name: qemu-guest-agent
-        state: started
-        
 #Install/Configure Zabbix
     - name: Add zabbix repo
       get_url: 
