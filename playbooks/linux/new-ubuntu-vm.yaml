@@ -118,20 +118,13 @@
       service:
         name: zabbix-agent
         state: restarted
-
-    - name: Enable Zabbix Agent
-      service:
-        name: zabbix-agent
         enabled: yes
 
 #Run final updates/upgrades and reboot
     - name: Update Cached Packages
       apt:
         update_cache: yes
+        upgrade: dist 
         
-    - name: Upgrade apt Packages
-      apt:
-        upgrade: dist      
-
     - name: Reboot Localhost
       reboot:
