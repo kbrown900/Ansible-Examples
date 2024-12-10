@@ -13,6 +13,7 @@
     zabbix_url: https://repo.zabbix.com/zabbix/7.2/release/ubuntu/pool/main/z/zabbix-release/zabbix-release_latest+ubuntu24.04_all.deb
     zabbix_install_path: /etc/zabbix-release_latest+ubuntu24.04_all.deb
     zabbix_conf: /etc/zabbix/zabbix_agentd.conf
+    zabbix_package: zabbix-agent
     NEW_USER: example
     PSK_PATH: /etc/zabbix/psk.psk #file path to create the PSK file for Zabbix
     # Change the following for your environment. 
@@ -30,13 +31,9 @@
     - name: Install Ubuntu Desktop - This will take a few minutes
       apt:
         name: ubuntu-desktop
-        state: present
-    
-    - name: Install Display Manager
-      apt:
         name: gdm3
         state: present
-
+    
     - name: Reboot Localhost
       reboot:
 
@@ -70,13 +67,13 @@
       apt:
         deb: '{{ zabbix_install_path }}'
 
-    - name: Update Cache
+    - name: Update Cache to see Zabbix
       apt:
         update_cache: yes
     
     - name: Install Zabbix
       apt:
-        name: zabbix-agent
+        name: '{{ zabbix_package }}'
 
     - name: Wait for file to exist
       wait_for:
@@ -112,22 +109,15 @@
 
     - name: Restart Zabbix-Agent
       service:
-        name: zabbix-agent
+        name: '{{ zabbix_package }}'
         state: restarted
-
-    - name: Enable Zabbix Agent
-      service:
-        name: zabbix-agent
         enabled: yes
 
 #Run final updates/upgrades and reboot
     - name: Update Cached Packages
       apt:
         update_cache: yes
-        
-    - name: Upgrade apt Packages
-      apt:
-        upgrade: dist      
+        upgrade: dist
 
     - name: Reboot Localhost
       reboot:
