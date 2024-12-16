@@ -10,6 +10,7 @@
 
   vars:
     NEW_USER: example #user to create - corrisponds with separately generated SSH Key
+    SSH_PUB: <changeme> #Public SSH Key
 
   tasks:
     - name: Create ansible user
@@ -25,7 +26,7 @@
       tags: always
       authorized_key: 
         user: '{{ NEW_USER }}'
-        key: "<SSH public key>"
+        key: '{{ SSH_PUB }}'
 
     - name: add user to sudoers
       tags: always
