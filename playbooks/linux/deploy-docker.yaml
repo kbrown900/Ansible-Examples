@@ -56,7 +56,7 @@
           - docker-compose-plugin
         state: latest
 
- - name: Pull the Portainer image
+    - name: Pull the Portainer image
       docker_image:
         name: portainer/portainer-ce
         tag: latest
