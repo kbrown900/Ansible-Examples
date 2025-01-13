@@ -1,6 +1,8 @@
 # Ansible-Examples
 ![GitHub contributors](https://img.shields.io/github/contributors-anon/kbrown900/Ansible-Examples?link=https%3A%2F%2Fgithub.com%2Fkbrown900%2FAnsible-Examples%2Fcommits%2Fmain%2F)
 ![GitHub commit activity](https://img.shields.io/github/commit-activity/m/kbrown900/Ansible-Examples)
+![GitHub License](https://img.shields.io/github/license/kbrown900/Ansible-Examples?link=https%3A%2F%2Fgithub.com%2Fkbrown900%2FAnsible-Examples%2Fblob%2Fmain%2FLICENSE)
+
 
 
 
